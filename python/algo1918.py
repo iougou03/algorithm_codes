@@ -1,43 +1,43 @@
-from collections import deque
+order = {
+    "+": 1,
+    "-": 1,
+    "*": 2,
+    "/": 2,
+    "(": 3,
+    ")": 3
+}
+stack = []
+ans = ""
 
-expression = deque(list(input()))
+expression = list(input())
+idx = 0
 
-keys = ["+", "-", "*" , "/", "(", ")"]
-ans = [] ; stack = []
+while idx < len(expression):
+    e = expression[idx]
 
-while expression:
-    char = expression.popleft()
-    if char in keys:
-        if char == "(": 
-            stack.append(char)
-            continue
-        elif char == ")":
-            while stack[-1] != "(":
-                ans.append(stack.pop())
-            stack.pop()
-        elif char == "*" or char == "/":
-            while stack and (stack[-1] == "*" or stack[-1] =="/"):
-                ans.append(stack.pop())
-        else:
-            while stack and stack[-1] != "(":
-                ans.append(stack.pop())
-        stack.append(char)
-    else: ans.append(char)
-    
-while stack: ans.append(stack.pop())
-for a in ans:
-    if a =="(" or a == ")": continue
-    print(a,end="")
+    if 65 <= ord(e) <= 90:
+        ans += str(e)
 
-# numStack deque equStack
-# ) 만나면 equStack에 다시 수 append
-# a + b * c + d * e * (f + g)
-# abc*+fg+de**+
-# 다음 eq가 우선순위가 다른지
-# 같으면
-# abcdefg
-# +*+**(+)
-# *+ (+)**+
+    else:
+        if stack:
+            if e == ")": # 괄호를 벗겨내는 작업
+                while stack[-1] != "(":
+                    ans += stack.pop()
+                stack.pop()
+            
+            # e가 연산자 일 때, stack의 top보다 
+            # 1. 우선순위가 낮거나 같다면 ans에 바로 추가해준다.
+            # 2. 우선순위가 높다면 stack에 append해줘야 한다(바로 아래에 적혀있음)
+            while stack and order[stack[-1]] >= order[e] and stack[-1] != "(":
+                ans += stack.pop()
 
-# 자신 뒤 항이 우선순위가 높다면,
-# 해당 항은 자신이 가장 클때까지 앞으로 간다
+        if e != ")": stack.append(e) # 괄호를 생성하거나 stack top보다 더 높은 연산자가 추가된다.
+
+    idx += 1
+
+while stack:
+    c = stack.pop()
+    if c == "(" or c == ")": continue
+    ans += c
+
+print(ans)

@@ -1,24 +1,18 @@
 n = int(input())
 seq = list(map(int, input().split()))
-dp = [1001 for _ in range(n + 1)]
-dp_lis = [[] for _ in range(n + 1)]
-
-def bsearch_lis(ni):
-    global n
-
-    idx = 1
-    while idx <= n:
-        if dp[idx] > seq[ni]:
-            dp_lis[ni] = []
-            dp[idx] = ni
-            for i in range(idx):
-                if seq[ni] > seq[i]:
-                    dp_lis[ni].append(seq[i])
-            return
-        idx += 1
+dp_lis = [[] for _ in range(n)]
+ans = [0, []]
 
 for i in range(n):
-    bsearch_lis(i)
+    dp_lis[i] = [seq[i]]
+    for j in range(i):
+        if seq[j] < seq[i]:
+            if len(dp_lis[i]) < len(dp_lis[j]) + 1:
+                dp_lis[i] = dp_lis[j] + [seq[i]]
 
-print(len(dp) -1)
-print(dp_lis)
+    if ans[0] < len(dp_lis[i]):
+        ans[0] = len(dp_lis[i])
+        ans[1] = dp_lis[i]
+
+print(ans[0])
+print(*ans[1])
