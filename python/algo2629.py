@@ -1,32 +1,25 @@
-dp = [[False for _ in range(31)] for _ in range(40001)]
+n = int(input()) # n <= 30
+weight_seq = [0] + list(map(int, input().split())) # wi <= 500 ; sorted asc
+t = int(input()) # t <= 7
+test_seq = list(map(int, input().split())) # ti <= 40,000
 
-v = int(input())
-weightList = list(map(int, input().split()))
+dp = [[False] * (15001) for _ in range(n + 1)]
+# we can put weight on the left side of the scale or 
+# on the right side of the scale which does not 
+# contain any marble, only weights
+def solution(widx : int, weight_sum : int):
 
-m = int(input())
-marbleList = list(map(int, input().split()))
+    if widx > n or dp[widx][weight_sum]: return
 
-for w in weightList: dp[w][1] = True
+    dp[widx][weight_sum] = True
 
-for weight in range(1, 40001):
-    for i in range(1, v):
-        wi = weightList[i]
+    solution(widx + 1, weight_sum + weight_seq[widx])
+    solution(widx + 1, abs(weight_sum - weight_seq[widx]))
+    solution(widx + 1, weight_sum)
 
-        
-        if dp[abs(weight - wi)][i - 1]:
-            dp[weight][i] = True
-                
-        
+solution(0, 0)
 
-
-
-print(dp[:15])
-    
-# for m in marbleList:
-#     state = False
-#     for w in weightList:
-#         if abs(m - w) != w and dp[abs(m - w)]:
-#             state = True
-#             break
-#     if state: print("Y", end=" ")
-#     else: print("N", end=" ")
+for i in range(t):
+    if test_seq[i] > 15000: print("N", end=" ")
+    elif dp[n][test_seq[i]]: print("Y", end=" ")
+    else: print("N", end=" ")
